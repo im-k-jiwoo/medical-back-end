@@ -1,3 +1,13 @@
+// post {
+//                 success {
+//                     slackSend (
+//                         channel: SLACK_CHANNEL,
+//                         color: SLACK_SUCCESS_COLOR,
+//                         message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
+//                     )
+//                 }
+//             }
+
 pipeline {
     agent any
 
@@ -13,10 +23,15 @@ pipeline {
         TAG = "${TAG_VERSION}${env.BUILD_ID}"
         NAMESPACE = 'back'
 
+        //slack notification
+        SLACK_CHANNEL = "#jenkins-build-alert"
+        SLACK_SUCCESS_COLOR = "#2C953C";
+        SLACK_FAIL_COLOR = "#FF3232";
+
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
-
+    
     stages {
         stage('Checkout') {
             steps {
@@ -85,6 +100,22 @@ pipeline {
                     }
                 }
             }
+            post {
+                success {
+                    slackSend (
+                        channel: SLACK_CHANNEL,
+                        color: SLACK_SUCCESS_COLOR,
+                        message: "ACR Push에 성공하였습니다."
+                    )
+                }
+                failure {
+                    slackSend (
+                        channel: SLACK_CHANNEL,
+                        color: SLACK_FAIL_COLOR,
+                        message: "ACR Push에 실패하였습니다."
+                    )
+                }
+            }
         }
         stage('Checkout GitOps') {
                     steps {
@@ -120,6 +151,22 @@ pipeline {
                         // 원격 저장소에 푸시
                         sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/rlozi99/back-gitops.git main"
                     }
+                }
+            }
+            post {
+                success {
+                    slackSend (
+                        channel: SLACK_CHANNEL,
+                        color: SLACK_SUCCESS_COLOR,
+                        message: "배포에 성공하였습니다."
+                    )
+                }
+                failure {
+                    slackSend (
+                        channel: SLACK_CHANNEL,
+                        color: SLACK_FAIL_COLOR,
+                        message: "배포에 실패하였습니다."
+                    )
                 }
             }
         }
