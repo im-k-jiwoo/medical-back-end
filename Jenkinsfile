@@ -35,28 +35,28 @@ pipeline {
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
 
-    stages {
-        stage('Checksum Generation') {
-            steps {
-                script {
-                    // Jenkinsfile의 경로를 지정
-                    def jenkinsfilePath = 'Jenkinsfile'
+    // stages {
+    //     stage('Checksum Generation') {
+    //         steps {
+    //             script {
+    //                 // Jenkinsfile의 경로를 지정
+    //                 def jenkinsfilePath = 'Jenkinsfile'
 
-                    // Jenkinsfile의 SHA-256 체크섬 생성
-                    def checksum = sh(script: "sha256sum $jenkinsfilePath | awk '{print \$1}'", returnStdout: true).trim()
+    //                 // Jenkinsfile의 SHA-256 체크섬 생성
+    //                 def checksum = sh(script: "sha256sum $jenkinsfilePath | awk '{print \$1}'", returnStdout: true).trim()
 
-                    // 체크섬 출력
-                    echo "Checksum of $jenkinsfilePath: $checksum"
-                }
-            }
-        }
+    //                 // 체크섬 출력
+    //                 echo "Checksum of $jenkinsfilePath: $checksum"
+    //             }
+    //         }
+    //     }
     
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
+    // stages {
+    //     stage('Checkout') {
+    //         steps {
+    //             checkout scm
+    //         }
+    //     }
 
         // stage('SonarQube Analysis') {
         //     steps {
@@ -75,18 +75,18 @@ pipeline {
                     }
                 }
 
- // JAR 파일 빌드 단계 추가
-        stage('Build JAR') {
-            steps {
-                script {
-                    withEnv(['JAVA_HOME=/usr/lib/jvm/jdk-21.0.2']) {
-                        // Gradle을 사용하여 JAR 파일 빌드
-                        sh './gradlew --version'
-                        sh './gradlew clean build --warning-mode=none -x test --info'
+        //JAR 파일 빌드 단계 추가
+                stage('Build JAR') {
+                    steps {
+                        script {
+                            withEnv(['JAVA_HOME=/usr/lib/jvm/jdk-21.0.2']) {
+                                // Gradle을 사용하여 JAR 파일 빌드
+                                sh './gradlew --version'
+                                sh './gradlew clean build --warning-mode=none -x test --info'
+                            }
+                        }
                     }
                 }
-            }
-        }
         // stage('SonarQube Analysis') {
         //             steps {
         //                 withSonarQubeEnv('SonarQubeServer') {
