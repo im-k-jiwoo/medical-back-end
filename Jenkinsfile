@@ -34,6 +34,22 @@ pipeline {
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
+
+    stages {
+        stage('Checksum Generation') {
+            steps {
+                script {
+                    // Jenkinsfile의 경로를 지정
+                    def jenkinsfilePath = 'Jenkinsfile'
+
+                    // Jenkinsfile의 SHA-256 체크섬 생성
+                    def checksum = sh(script: "sha256sum $jenkinsfilePath | awk '{print \$1}'", returnStdout: true).trim()
+
+                    // 체크섬 출력
+                    echo "Checksum of $jenkinsfilePath: $checksum"
+                }
+            }
+        }
     
     stages {
         stage('Checkout') {
