@@ -1,3 +1,13 @@
+// post {
+//                 success {
+//                     slackSend (
+//                         channel: SLACK_CHANNEL,
+//                         color: SLACK_SUCCESS_COLOR,
+//                         message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
+//                     )
+//                 }
+//             }
+
 pipeline {
     agent any
 
