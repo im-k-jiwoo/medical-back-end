@@ -10,7 +10,7 @@ echo $dockerImageName
 # --severity CRITICAL: 심각도가 CRITICAL인 취약점만 보고
 # --light: 가볍게 스캔, 패키지 버전만 확인
 docker run --rm -v $WORKSPACE:/root/.cache/ -e 
-TRIVY_GITHUB_TOKEN="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" 
+TRIVY_GITHUB_TOKEN="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" 
 aquasec/trivy:0.17.2 -q image --exit-code 1 
 --severity CRITICAL --light $dockerImageName
 
