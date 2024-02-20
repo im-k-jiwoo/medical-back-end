@@ -8,10 +8,10 @@ pipeline {
         AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
         CONTAINER_REGISTRY = 'goodbirdacr.azurecr.io'
         RESOURCE_GROUP = 'AKS'
+
+         // 태그
         REPO = 'medical/back'
         IMAGE_NAME = 'medical/back:latest'
-
-        // 태그
         TAG_VERSION = "v1.0.Beta"
         TAG = "${TAG_VERSION}${env.BUILD_ID}"
         NAMESPACE = 'back'
@@ -25,7 +25,8 @@ pipeline {
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
-
+    
+    // 체크섬 검사
     stages {
         stage('Checkout') {
             steps {
@@ -33,12 +34,14 @@ pipeline {
             }
         }
 
+        // gradle 실행 권한 부여
         stage('Grant Execute Permission to Gradle Wrapper') {
             steps {
                 sh 'chmod +x ./gradlew'
             }
         }
 
+        // JAR 파일 빌드 단계 추가
         stage('Build JAR') {
             steps {
                 script {
