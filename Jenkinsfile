@@ -1,12 +1,12 @@
 // post {
-//                 success {
-//                     slackSend (
-//                         channel: SLACK_CHANNEL,
-//                         color: SLACK_SUCCESS_COLOR,
-//                         message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
-//                     )
-//                 }
-//             }
+//     success {
+//         slackSend (
+//             channel: SLACK_CHANNEL,
+//             color: SLACK_SUCCESS_COLOR,
+//             message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
+//         )
+//     }
+// }
 
 pipeline {
     agent any
@@ -50,7 +50,7 @@ pipeline {
     //             }
     //         }
     //     }
-    
+
     // stages {
     //     stage('Checkout') {
     //         steps {
@@ -70,10 +70,10 @@ pipeline {
     //     }
     // }
     stage('Grant Execute Permission to Gradle Wrapper') {
-                steps {
-                    sh 'chmod +x ./gradlew'
-                }
-            }
+        steps {
+            sh 'chmod +x ./gradlew'
+        }
+    }
 
     //JAR 파일 빌드 단계 추가
     stage('Build JAR') {
@@ -87,23 +87,23 @@ pipeline {
             }
         }
     }
-    
+
     // stage('SonarQube Analysis') {
-    //             steps {
-    //                 withSonarQubeEnv('SonarQubeServer') {
-    //                     script {
-    //                         // SonarQube 스캔 명령어 실행
-    //                         sh "./gradlew sonar clean build --warning-mode=none -x test --info"
-    //                     }
-    //                 }
+    //     steps {
+    //         withSonarQubeEnv('SonarQubeServer') {
+    //             script {
+    //                 // SonarQube 스캔 명령어 실행
+    //                 sh "./gradlew sonar clean build --warning-mode=none -x test --info"
     //             }
     //         }
+    //     }
+    // }
 
     stage('Trivy Security') {
-          steps {
-              sh 'chmod +x trivy-image-scan.sh' // 스크립트에 실행 권한 추가
-              sh './trivy-image-scan.sh' // Trivy 이미지 스캔 실행
-          }
+        steps {
+            sh 'chmod +x trivy-image-scan.sh' // 스크립트에 실행 권한 추가
+            sh './trivy-image-scan.sh' // Trivy 이미지 스캔 실행
+        }
     }
 
     stage('Build and Push Docker Image to ACR') {
@@ -115,7 +115,7 @@ pipeline {
                     // Dockerfile에 있는 JAR 파일을 사용하여 Docker 이미지 빌드
                     sh "docker build -t $REPO:$TAG ."
                     // 이미지 태그 지정 및 ACR로 푸시
-                     sh "docker tag $REPO:$TAG $CONTAINER_REGISTRY/$REPO:$TAG"
+                    sh "docker tag $REPO:$TAG $CONTAINER_REGISTRY/$REPO:$TAG"
                     sh "docker push $CONTAINER_REGISTRY/$REPO:$TAG"
                 }
             }
@@ -138,7 +138,6 @@ pipeline {
         }
     }
 
-
     stage('Checkout GitOps') {
         steps {
             // 'front_gitops' 저장소에서 파일들을 체크아웃합니다.
@@ -148,7 +147,6 @@ pipeline {
         }
     }
 
-    
     stage('Update Kubernetes Configuration') {
         steps {
             script {
@@ -160,6 +158,7 @@ pipeline {
             }
         }
     }
+
     stage('Push Changes to GitOps Repository') {
         steps {
             script {
