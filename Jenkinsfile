@@ -25,6 +25,14 @@ pipeline {
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
     
+    // 체크섬 검사
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         // gradle 실행 권한 부여
         stage('Grant Execute Permission to Gradle Wrapper') {
             steps {
