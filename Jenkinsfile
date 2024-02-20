@@ -24,23 +24,6 @@ pipeline {
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
-
-    post {
-            success {
-                slackSend (
-                    channel: SLACK_CHANNEL,
-                    color: SLACK_SUCCESS_COLOR,
-                    message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
-               )
-            }
-            failure {
-                slackSend (
-                    channel: SLACK_CHANNEL,
-                    color: SLACK_FAIL_COLOR,
-                    message: "==================================================================\n배포 파이프라인이 실패하였습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
-               )
-            }
-        }
     
     // 체크섬 검사
     stages {
