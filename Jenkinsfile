@@ -25,28 +25,23 @@ pipeline {
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
 
-        // 체크섬 검사
-        stages {
-                stage('Checkout') {
-                    steps {
-                        checkout scm
-                    }
-                }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
-        // gradle 실행 권한 부여
         stage('Grant Execute Permission to Gradle Wrapper') {
-                    steps {
-                        sh 'chmod +x ./gradlew'
-                    }
-                }
+            steps {
+                sh 'chmod +x ./gradlew'
+            }
+        }
 
-        
-        // JAR 파일 빌드 단계 추가
         stage('Build JAR') {
             steps {
                 script {
                     withEnv(['JAVA_HOME=/usr/lib/jvm/jdk-21.0.2']) {
-                        // Gradle을 사용하여 JAR 파일 빌드
                         sh './gradlew --version'
                         sh './gradlew clean build --warning-mode=none -x test --info'
                     }
@@ -55,22 +50,19 @@ pipeline {
         }
 
         stage('Trivy Security') {
-              steps {
-                  sh 'chmod +x trivy-image-scan.sh' // 스크립트에 실행 권한 추가
-                  sh './trivy-image-scan.sh' // Trivy 이미지 스캔 실행
-              }
+            steps {
+                sh 'chmod +x trivy-image-scan.sh'
+                sh './trivy-image-scan.sh'
+            }
         }
 
         stage('Build and Push Docker Image to ACR') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'acr-credential-id', passwordVariable: 'ACR_PASSWORD', usernameVariable: 'ACR_USERNAME')]) {
-                        // Log in to ACR
                         sh "az acr login --name $CONTAINER_REGISTRY --username $ACR_USERNAME --password $ACR_PASSWORD"
-                        // Dockerfile에 있는 JAR 파일을 사용하여 Docker 이미지 빌드
                         sh "docker build -t $REPO:$TAG ."
-                        // 이미지 태그 지정 및 ACR로 푸시
-                         sh "docker tag $REPO:$TAG $CONTAINER_REGISTRY/$REPO:$TAG"
+                        sh "docker tag $REPO:$TAG $CONTAINER_REGISTRY/$REPO:$TAG"
                         sh "docker push $CONTAINER_REGISTRY/$REPO:$TAG"
                     }
                 }
@@ -92,7 +84,14 @@ pipeline {
                 }
             }
         }
+
         stage('Push Changes to GitOps Repository') {
+            steps {
+                script {
+                    // 원하는 작업 수행
+                    echo "Changes pushed to GitOps Repository"
+                }
+            }
             post {
                 success {
                     slackSend (
