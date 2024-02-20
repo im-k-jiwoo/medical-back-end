@@ -33,30 +33,6 @@ pipeline {
             }
         }
 
-        // gradle 실행 권한 부여
-        stage('Grant Execute Permission to Gradle Wrapper') {
-            steps {
-                sh 'chmod +x ./gradlew'
-            }
-            // Slack 알림을 추가합니다.
-            post {
-                success {
-                    slackSend (
-                        channel: SLACK_CHANNEL,
-                        color: SLACK_SUCCESS_COLOR,
-                        message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
-                   )
-                }
-                failure {
-                    slackSend (
-                        channel: SLACK_CHANNEL,
-                        color: SLACK_FAIL_COLOR,
-                        message: "==================================================================\n배포 파이프라인이 실패하였습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
-                   )
-                }
-            }
-        }
-
         // stage('SonarQube Analysis') {
         //     steps {
         //         script {
@@ -131,6 +107,8 @@ pipeline {
             }
         }
 
+
+        
         stage('Checkout GitOps') {
                     steps {
                         // 'front_gitops' 저장소에서 파일들을 체크아웃합니다.
