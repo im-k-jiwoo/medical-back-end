@@ -1,33 +1,26 @@
-// post {
-//                 success {
-//                     slackSend (
-//                         channel: SLACK_CHANNEL,
-//                         color: SLACK_SUCCESS_COLOR,
-//                         message: "==================================================================\n배포 파이프라인이 시작되었습니다.\n${env.JOB_NAME}(${env.BUILD_NUMBER})\n${GIT_COMMIT_AUTHOR} - ${GIT_COMMIT_MESSAGE}\n${env.BUILD_URL}"
-//                     )
-//                 }
-//             }
-
 pipeline {
     agent any
 
     environment {
+        //Azure Info
         AZURE_SUBSCRIPTION_ID = 'c8ce3edc-0522-48a3-b7e4-afe8e3d731d9'
         AZURE_TENANT_ID = '4ccd6048-181f-43a0-ba5a-7f48e8a4fa35'
         CONTAINER_REGISTRY = 'goodbirdacr.azurecr.io'
         RESOURCE_GROUP = 'AKS'
-        REPO = 'medicine/back'
-        IMAGE_NAME = 'medicine/back:latest'
-        //TAG = 'latest'
+        REPO = 'medical/back'
+        IMAGE_NAME = 'medical/back:latest'
+
+        //tag
         TAG_VERSION = "v1.0.Beta"
         TAG = "${TAG_VERSION}${env.BUILD_ID}"
         NAMESPACE = 'back'
 
-        //slack notification
+        //Slack notification
         SLACK_CHANNEL = "#jenkins-build-alert"
         SLACK_SUCCESS_COLOR = "#2C953C";
         SLACK_FAIL_COLOR = "#FF3232";
 
+        //gitops
         GIT_CREDENTIALS_ID = 'jenkins-git-access'
         JAR_FILE_PATH = 'build/libs/demo-0.0.1-SNAPSHOT.jar'
     }
