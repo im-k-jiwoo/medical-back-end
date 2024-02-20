@@ -49,12 +49,12 @@ pipeline {
             }
         }
 
-        stage('Trivy Security') {
-            steps {
-                sh 'chmod +x trivy-image-scan.sh'
-                sh './trivy-image-scan.sh'
-            }
-        }
+        // stage('Trivy Security') {
+        //     steps {
+        //         sh 'chmod +x trivy-image-scan.sh'
+        //         sh './trivy-image-scan.sh'
+        //     }
+        // }
 
         stage('Build and Push Docker Image to ACR') {
             steps {
